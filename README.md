@@ -1,4 +1,4 @@
-#aqua-currency
+#succotash-cauteloso:
 Sempre pesquisando, ouvindo pessoas, aprimorando constante.
 import requests
 
