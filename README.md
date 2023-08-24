@@ -1,5 +1,6 @@
 #succotash-cauteloso:
 Sempre pesquisando, ouvindo pessoas, aprimorando constante. Subi este código galera,via celular, não usei o Git via computador, tranquilo,depois resolvo os procedimentos cabíveis.
+
 import requests
 
 def get_exchange_rate(from_currency, to_currency):
