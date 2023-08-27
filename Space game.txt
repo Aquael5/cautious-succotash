@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html>
+ 
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="" content="" />
+  <title>Space Invaders</title>
+  <style>
+  
+body {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  background-color: black;
+  color: white;
+}
+ 
+#container {
+  position: relative;
+  visibility: hidden;
+  width: 100%;
+  height: 100%;
+  max-width: 100vh;
+  overflow: hidden;
+  background: url(https://i.ibb.co/t4b9T8B/background.png) 400% repeat;
+  animation: STAR-MOVE linear infinite;
+}
+ 
+#play {
+  position: absolute;
+  align-self: center;
+  border: none;
+  background: purple;
+  outline: none;
+}
+ 
+.move-down {
+  animation: moveDown linear;
+}
+ 
+.shake {
+  animation-name: shake;
+}
+ 
+.u-center-x {
+  display: flex;
+  justify-content: center;
+}
+ 
+.u-center-xy {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+ 
+#player-health {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 8%;
+  z-index: 9999;
+}
+ 
+#player-health__heart {
+  width: 100%;
+}
+ 
+#player-health__lives {
+  position: absolute;
+  font-size: 3vmin;
+  font-weight: 900;
+}
+ 
+#scoreboard {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  flex-direction: column;
+  font-size: 6vmin;
+  font-weight: 400;
+  z-index: 9999;
+}
+ 
+#ship {
+  position: absolute;
+  bottom: 10%;
+  width: 15%;
+}
+ 
+#ship-img {
+  width: 100%;
+  z-index: 999;
+}
+ 
+.flame {
+  animation: flicker 1s linear infinite;
+  transform-box: fill-box;
+}
+ 
+.bullet {
+  position: absolute;
+  top: 31%;
+  width: 4px;
+  height: 10px;
+  background: rgb(0, 255, 0);
+  border-radius: 999px 999px 0 0;
+  box-shadow: 0 0 10px rgb(0, 255, 0);
+  transition: transform linear;
+}
+ 
+.monster {
+  position: absolute;
+  top: 0;
+  width: 20%;
+  transform: translateY(-100%);
+  z-index: 100;
+}
+ 
+.monster__img {
+  width: 100%;
+}
+ 
+.monster__health {
+  position: absolute;
+  bottom: 100%;
+  width: 70%;
+  height: 12%;
+  margin-bottom: 5px;
+  background: rgba(255, 212, 202, 0.37);
+  border-radius: 3px;
+  opacity: 0;
+  transition: opacity 50ms linear;
+}
+ 
+.monster__health__bar {
+  width: 100%;
+  height: 100%;
+  background: red;
+  border-radius: inherit;
+}
+ 
+@keyframes STAR-MOVE {
+  to {
+    background-position-y: 600%;
+  }
+}
+ 
+@keyframes flicker {
+  0% {
+    transform: rotate(-1deg);
+  }
+ 
+  20% {
+    transform: rotate(1deg);
+  }
+ 
+  40% {
+    transform: rotate(-1deg);
+  }
+ 
+  60% {
+    transform: rotate(1deg) scaleY(1.04);
+  }
+ 
+  80% {
+    transform: rotate(-2deg) scaleY(0.92);
+  }
+ 
+  100% {
+    transform: rotate(1deg);
+  }
+}
+ 
+@keyframes shake {
+  0% {
+    transform: translate(1px, 1px) rotate(0deg);
+  }
+ 
+  10% {
+    transform: translate(-1px, -2px) rotate(-1deg);
+  }
+ 
+  20% {
+    transform: translate(-3px, 0px) rotate(1deg);
+  }
+ 
+  30% {
+    transform: translate(3px, 2px) rotate(0deg);
+  }
+ 
+  40% {
+    transform: translate(1px, -1px) rotate(1deg);
+  }
+ 
+  50% {
+    transform: translate(-1px, 2px) rotate(-1deg);
+  }
+ 
+  60% {
+    transform: translate(-3px, 1px) rotate(0deg);
+  }
+ 
+  70% {
+    transform: translate(3px, 1px) rotate(-1deg);
+  }
+ 
+  80% {
+    transform: translate(-1px, -1px) rotate(1deg);
+  }
+ 
+  90% {
+    transform: translate(1px, 2px) rotate(0deg);
+  }
+ 
+  100% {
+    transform: translate(1px, -2px) rotate(-1deg);
+  }
+}
+ 
+  </style>
+  <style id="keyframes">
+    @keyframe moveDown {}
+  </style>
+ 
+<body>
+  <button id="play">PLAY</button>
+  <div id="container" class="u-center-x">
+    <div id="player-health" class="u-center-xy">
+    <svg id="player-health__heart" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 391.837 391.837"><path d="M285.257 35.528c58.743.286 106.294 47.836 106.58 106.58 0 107.624-195.918 214.204-195.918 214.204S0 248.165 0 142.108c0-58.862 47.717-106.58 106.58-106.58a105.534 105.534 0 0189.339 48.065 106.578 106.578 0 0189.338-48.065z" fill="#d7443e"></path></svg>
+      <span id="player-health__lives">5</span>
+    </div>
+    <div id="scoreboard" class="u-center-xy">
+      <span id="scoreboard__text">SCORE</span>
+      <span id="scoreboard__score">00</span>
+    </div>
+    <div id="monsters-container">
+      <div data-animating class="monster u-center-x">
+        <img class="monster__img" src="https://svgshare.com/i/QGy.svg" alt="" />
+        <div class="monster__health">
+          <div data-health="100" class="monster__health__bar"></div>
+        </div>
+      </div>
+    </div>
+    <div id="ship" class="u-center-x">
+     <svg id="ship-img" viewBox="0 0 143 275" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g class="flame">
+          <path
+            d="M71.025 179.011C54.648 179.011 41 192.659 41 209.036c0 22.747 26.386 62.779 27.295 64.599.91.91 1.365 1.365 2.275 1.365 1.365-.454 2.275-1.365 3.185-2.275.91-1.819 27.75-41.397 27.295-64.598 0-16.378-13.193-29.571-30.025-29.116z"
+            fill="#F79548" ></path>
+          <path
+            d="M70.115 180.831c-8.189 0-15.013 6.824-15.013 15.012 0 11.828 13.193 31.39 13.648 31.845.455.455.91.91 1.365.455.91 0 .91 0 1.365-.455.91-.91 13.647-20.926 13.647-31.845 0-8.188-6.823-15.012-15.012-15.012z"
+            fill="#FCBB76" ></path>
+        </g>
+        <g class="flame">
+          <path
+            d="M18.761 177.006C10.164 177.006 3 184.17 3 192.767c0 11.941 13.85 32.955 14.328 33.911.478.477.717.716 1.195.716.716-.239 1.194-.716 1.671-1.194.478-.955 14.567-21.731 14.329-33.91 0-8.597-6.926-15.523-15.762-15.284z"
+            fill="#F79548" ></path>
+          <path
+            d="M18.284 177.961c-4.3 0-7.881 3.582-7.881 7.881 0 6.209 6.925 16.477 7.164 16.716.239.239.478.478.716.239.478 0 .478 0 .717-.239.477-.477 7.164-10.985 7.164-16.716 0-4.299-3.582-7.881-7.88-7.881z"
+            fill="#FCBB76" ></path>
+        </g>
+        <g class="flame">
+          <path
+            d="M122.761 177.006c-8.597 0-15.761 7.164-15.761 15.761 0 11.941 13.851 32.955 14.328 33.911.478.477.717.716 1.195.716.716-.239 1.194-.716 1.671-1.194.478-.955 14.567-21.731 14.329-33.91-.001-8.597-6.926-15.523-15.762-15.284z"
+            fill="#F79548" ></path>
+          <path
+            d="M122.283 177.961c-4.298 0-7.88 3.582-7.88 7.881 0 6.209 6.925 16.477 7.164 16.716.239.239.478.478.716.239.478 0 .478 0 .717-.239.477-.477 7.164-10.985 7.164-16.716 0-4.299-3.582-7.881-7.881-7.881z"
+            fill="#FCBB76" ></path>
+        </g>
+        <path
+          d="M51.44 87.027v-5.692c0-9.99 6.49-19.181 17.36-24.584a5.851 5.851 0 012.593-.587c.923 0 1.82.203 2.593.587 10.87 5.403 17.36 14.593 17.36 24.584v5.692l8.66 13.697V40.519c0-14.995-10.356-32.168-25.742-39.864-1.745-.873-3.997-.873-5.742 0C53.136 8.351 42.78 25.524 42.78 40.519v60.205l8.66-13.697z"
+          fill="#FE646F" ></path>
+        <path
+          d="M51.44 87.027v-5.692c0-5.57 2.02-10.89 5.688-15.444V40.519c0-5.677 1.489-11.665 4.169-17.333H46.946c-2.68 5.668-4.166 11.656-4.166 17.333v60.205l8.66-13.697z"
+          fill="#FD4755" ></path>
+        <path d="M62.067 23.186v8.438c0 1.033 1.07 1.87 2.391 1.87h13.87c1.32 0 2.39-.837 2.39-1.87v-8.438H62.067z"
+          fill="#fff" ></path>
+        <path
+          d="M95.84 23.186C91.44 13.88 83.826 5.438 74.263.655c-1.746-.873-3.998-.873-5.743 0-9.561 4.783-17.177 13.226-21.575 22.53H95.84z"
+          fill="#FD8087" ></path>
+        <path
+          d="M78.567 3.134A42.792 42.792 0 0074.265.655c-1.746-.873-3.998-.873-5.743 0-9.562 4.783-17.178 13.226-21.576 22.53h14.347c3.717-7.862 9.73-15.108 17.274-20.051z"
+          fill="#FE646F" ></path>
+        <g fill="#ACACAC">
+          <path
+            d="M113.626 122.266c.982 1.552 2.441 2.915 4.22 3.943l15.984 9.239V67.202c0-1.952-.495-3.884-1.458-5.685l-6.668-12.48c-.819-1.532-3.594-1.532-4.413 0l-6.668 12.48c-.963 1.8-1.458 3.733-1.458 5.685v54.334l.461.73zM133.829 175.802v-20.947l-20.665 4.177v16.77h20.665z" ></path>
+        </g>
+        <g fill="#9C9C9C">
+          <path
+            d="M113.626 122.266c.982 1.552 2.441 2.915 4.22 3.943l4.884 2.823v-61.83c0-1.952.495-3.884 1.457-5.685l4.093-7.658-2.576-4.821c-.819-1.532-3.594-1.532-4.413 0l-6.668 12.48c-.962 1.8-1.458 3.732-1.458 5.684v54.334l.461.73zM122.729 175.802v-18.704l-9.565 1.934v16.77h9.565z" ></path>
+        </g>
+        <path d="M113.164 77.85h20.665v28.305h-20.665V77.85z" fill="#FE646F" ></path>
+        <path d="M113.164 77.85h9.565v28.305h-9.565V77.85z" fill="#FD4755" ></path>
+        <path
+          d="M134.004 186H112.99c-1.783 0-3.076-1.328-2.603-2.673l2.777-7.889h20.665l2.777 7.889c.473 1.345-.82 2.673-2.602 2.673z"
+          fill="#838383" ></path>
+        <path
+          d="M119.952 183.327l2.777-7.889h-9.566l-2.776 7.889c-.474 1.344.82 2.673 2.602 2.673h9.566c-1.783 0-3.076-1.328-2.603-2.673z"
+          fill="#5A5A5A" ></path>
+        <g fill="#ACACAC">
+          <path
+            d="M24.94 126.209c1.78-1.028 3.238-2.391 4.22-3.943l.461-.731V67.202c0-1.952-.495-3.884-1.458-5.685l-6.668-12.48c-.82-1.532-3.594-1.532-4.412 0l-6.67 12.48c-.962 1.8-1.457 3.733-1.457 5.685v68.246l15.985-9.239zM29.622 175.802v-16.77l-20.665-4.176v20.946h20.665z" ></path>
+        </g>
+        <g fill="#9C9C9C">
+          <path
+            d="M18.521 129.92V67.202c0-1.952.496-3.884 1.458-5.685l4.093-7.658-2.577-4.821c-.819-1.532-3.593-1.532-4.412 0l-6.669 12.48c-.962 1.8-1.457 3.732-1.457 5.684v68.246l9.564-5.528zM18.521 175.802v-19.013l-9.564-1.933v20.946h9.564z" ></path>
+        </g>
+        <path d="M8.957 77.85h20.665v28.305H8.957V77.85z" fill="#FE646F" ></path>
+        <path d="M8.957 77.85h9.565v28.305H8.957V77.85z" fill="#FD4755" ></path>
+        <path
+          d="M29.796 186H8.782c-1.782 0-3.075-1.328-2.602-2.673l2.777-7.889h20.665l2.777 7.889c.473 1.345-.82 2.673-2.603 2.673z"
+          fill="#838383" ></path>
+        <path
+          d="M15.745 183.327l2.776-7.889H8.956l-2.777 7.889C5.706 184.671 7 186 8.782 186h9.565c-1.783 0-3.075-1.328-2.602-2.673z"
+          fill="#5A5A5A" ></path>
+        <g fill="#D8ECFE">
+          <path
+            d="M44.324 158.48c0-1.863 1.937-3.379 4.318-3.379h2.798V86.912h-.445l-22.252 35.193c-.952 1.507-2.35 2.813-4.078 3.812L.97 139.612c-.61.352-.971.911-.971 1.505v10.854c0 .853.738 1.599 1.793 1.812l42.531 8.595v-3.898zM141.815 139.612l-23.694-13.695c-1.728-.999-3.127-2.305-4.079-3.812L91.791 86.912h-.446v68.189h2.798c2.381 0 4.319 1.516 4.319 3.38v3.898l42.531-8.596c1.055-.213 1.793-.959 1.793-1.812v-10.854c0-.594-.361-1.153-.971-1.505z" ></path>
+        </g>
+        <g>
+          <path
+            d="M50.976 86.942l-22.233 35.163c-.952 1.507-2.35 2.813-4.078 3.812L.97 139.612c-.61.352-.971.911-.971 1.505v10.854c0 .853.738 1.599 1.793 1.812l7.772 1.57v-10.494c0-.594.36-1.153.97-1.505l23.695-13.695c1.728-.999 3.126-2.305 4.078-3.812l12.668-20.035v-18.87z"
+            fill="#C4E2FF" ></path>
+        </g>
+        <path
+          d="M91.81 155.101V81.335c0-10.44-7.036-19.652-17.576-24.89-1.727-.86-3.955-.86-5.683 0-10.54 5.238-17.575 14.45-17.575 24.89v73.766H91.81z"
+          fill="#9C9C9C" ></path>
+        <path
+          d="M65.324 155.101V81.335c0-8.933 5.153-16.964 13.243-22.38a38.954 38.954 0 00-4.333-2.51c-1.727-.86-3.955-.86-5.683 0-10.54 5.238-17.575 14.45-17.575 24.89v73.766h14.348z"
+          fill="#838383" ></path>
+        <g>
+          <path
+            d="M68.551 56.444c-8.503 4.227-14.723 11.04-16.81 18.998h39.303c-2.087-7.958-8.306-14.771-16.81-18.997-1.727-.86-3.955-.86-5.683 0z"
+            fill="#26A6FE" ></path>
+        </g>
+        <g>
+          <path
+            d="M51.741 75.442H66.09c1.714-6.533 6.215-12.294 12.478-16.486a38.953 38.953 0 00-4.333-2.512c-1.727-.858-3.955-.858-5.683 0-8.503 4.227-14.723 11.04-16.81 18.998z"
+            fill="#0593FC" ></path>
+        </g>
+        <g>
+          <path
+            d="M79.044 93.48H63.741c-1.923 0-3.482-1.22-3.482-2.725 0-1.505 1.559-2.725 3.482-2.725h15.303c1.924 0 3.482 1.22 3.482 2.725 0 1.505-1.558 2.724-3.482 2.724z"
+            fill="#5A5A5A" ></path>
+        </g>
+        <g>
+          <path
+            d="M52.497 172.372v11.757c0 1.033 1.07 1.871 2.392 1.871h33.007c1.321 0 2.392-.838 2.392-1.871v-11.757h-37.79z"
+            fill="#838383" ></path>
+          <path
+            d="M66.845 184.129v-11.757H52.498v11.757c0 1.033 1.07 1.871 2.391 1.871h14.347c-1.32 0-2.39-.838-2.39-1.871z"
+            fill="#5A5A5A" ></path>
+          <path
+            d="M96.534 172.735H46.251c-1.32 0-2.391-.838-2.391-1.871V158.48c0-2.067 2.14-3.742 4.782-3.742h45.501c2.642 0 4.783 1.675 4.783 3.742v12.384c0 1.033-1.07 1.871-2.392 1.871z"
+            fill="#26A6FE" ></path>
+          <path
+            d="M58.207 170.864V158.48c0-2.067 2.141-3.742 4.783-3.742H48.642c-2.641 0-4.782 1.675-4.782 3.742v12.384c0 1.034 1.07 1.872 2.391 1.872h14.347c-1.32-.001-2.391-.839-2.391-1.872z"
+            fill="#0593FC" ></path>
+        </g>
+        <g>
+          <path
+            d="M30.167 150.364c-1.923 0-3.482-1.219-3.482-2.724v-10.86c0-1.505 1.559-2.724 3.482-2.724 1.922 0 3.481 1.219 3.481 2.724v10.86c0 1.505-1.559 2.724-3.481 2.724zM112.619 150.364c-1.923 0-3.481-1.219-3.481-2.724v-10.86c0-1.505 1.558-2.724 3.481-2.724 1.924 0 3.482 1.219 3.482 2.724v10.86c0 1.505-1.559 2.724-3.482 2.724z"
+            fill="#8AC9FE" ></path>
+        </g>
+      </svg>
+ 
+ 
+      <div id="bullets-container"></div>
+      <div data-transitioning class="bullet"></div>
+      <div data-transitioning class="bullet"></div>
+      <div data-transitioning class="bullet"></div>
+      <div data-transitioning class="bullet"></div>
+      <div data-transitioning class="bullet"></div>
+    </div>
+  </div>
+  <!-- all audios -->
+  <audio id="shoot-sound" src="https://dl.dropbox.com/s/a76ye3w4k22zqbm/shoot.wav?dl=0"></audio>
+  <!-- <audio id="music" src="audios/music.wav"></audio> -->
+  <audio id="monster-killed-sound" src="https://dl.dropbox.com/s/r5ukw512c9cemv1/monsterKilled.wav?dl=0/"></audio>
+  <audio id="heart-lost-sound" src="https://dl.dropbox.com/s/nofa097i3n7zvpl/heartLosed.wav?dl=0"></audio>
+  <audio id="game-over-sound" src="https://dl.dropbox.com/s/zzvzacz21fpntgc/gameOver.wav?dl=0"></audio>
+  <!--     end   -->
+  <script>
+  
+/* initial values */
+window.onload = () => {
+const container = document.querySelector("#container");
+const play = document.querySelector("#play");
+const ship = document.querySelector("#ship");
+const bullets = Array.from(document.querySelectorAll(".bullet"));
+const exBullet = bullets[0];
+const monstersContainer = document.querySelector("#monsters-container");
+const exMonster = document.querySelector(".monster");
+ 
+const containerWidth = container.clientWidth;
+const shipWidth = ship.clientWidth;
+const exBulletWidth = exBullet.clientWidth;
+const exMonsterWidth = exMonster.clientWidth;
+ 
+const containerHeight = container.clientHeight;
+const shipHeight = ship.clientHeight;
+const exBulletHeight = exBullet.clientHeight;
+const exMonsterHeight = exMonster.clientHeight;
+ 
+// initial distance from idleBullet's end to container end
+const containerLeft = container.offsetLeft;
+const containerTop = container.offsetTop;
+const exBulletEndY = exBullet.getBoundingClientRect().bottom - containerTop;
+ 
+const scoreDiv = document.querySelector("#scoreboard__score");
+const heart = document.querySelector("#player-health__heart");
+const playerLives = document.querySelector("#player-health__lives");
+// time taken to fire each bullet
+const firetime = 400; //ms
+// Define the debounced function
+const debouncedShoot = debounce(shoot, firetime, true);
+ 
+let fingerOnShip,
+  shipOffsetX,
+  monsterSpeed = 12, // px per ms
+  moveMonsterDownId,
+  bulletDmg = 30,
+  maxMonsterDelay = 3000,
+  spawnTime = 4500;
+ 
+function randomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+ 
+function playAudio(audio) {
+  audio.currentTime = 0;
+  audio.play();
+}
+ 
+function setAnimDur(elem, durForPixel) {
+  const elemStartBottom = containerHeight + exMonsterHeight * 2;
+  const duration = elemStartBottom * (640 / containerHeight) * durForPixel;
+  elem.style.animationDuration = duration + "ms";
+}
+ 
+function debounce(func, wait, immediate) {
+  var timeout;
+  return function () {
+    var context = this,
+      args = arguments;
+    var callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(function () {
+      timeout = null;
+      if (!immediate) {
+        func.apply(context, args);
+      }
+    }, wait);
+    if (callNow) func.apply(context, args);
+  };
+}
+ 
+function startGame() {
+  const heartLossedSound = document.querySelector("#heart-lost-sound");
+  moveMonsterDownId = setInterval(moveMonsterDown, spawnTime);
+  document.querySelector("#keyframes").innerHTML = `@keyframes moveDown {
+    to {
+    transform: translateY(${containerHeight}px)
+    }
+  }`;
+  container.style.animationDuration = containerHeight / 640 * 2000 + 'ms'
+  heartLossedSound.addEventListener(
+    "loadedmetadata",
+    () => (heart.style.animationDuration = heartLossedSound.duration + "s")
+  );
+ 
+  setAnimDur(exMonster, monsterSpeed);
+  handleMonster();
+  //alert("click ok to continue")
+};
+ 
+function moveShip(e) {
+  const activeBullets = Array.from(document.querySelectorAll(".bullet")).filter(
+    (bullet) => bullet.dataset.transitioning
+  );
+ 
+  const nextShipX = e.targetTouches[0].clientX - shipOffsetX - containerLeft;
+ 
+  if (nextShipX <= 0 || nextShipX >= containerWidth - shipWidth) return;
+ 
+  activeBullets.forEach(
+    (activeBullet) =>
+      (activeBullet.style.left =
+        activeBullet.getBoundingClientRect().left -
+        containerLeft -
+        nextShipX +
+        "px")
+  );
+ 
+  ship.style.left = nextShipX + "px";
+}
+ 
+function getAlignedMonster(idleBullet) {
+  const exBulletStartY = exBulletEndY - exBulletHeight;
+  // distance of idleBullet's middle from left
+  const bullletMidX =
+    idleBullet.getBoundingClientRect().right -
+    exBulletWidth / 2 -
+    containerLeft;
+  const alignedMonster = Array.from(document.querySelectorAll(".monster"))
+    .filter(function (monster) {
+      const monsterRect = monster.getBoundingClientRect();
+      // distance of monster's end to top of container
+      const monsterEndY = monsterRect.bottom - containerTop;
+      // distance from the left of monster's start
+      // plus a few pixels for clear hit
+      const monsterStartX =
+        monsterRect.left + exMonsterWidth / 5 - containerLeft;
+      // distance from the left of monster's end
+      // minus the image spacing for clear hit
+      const monsterEndX =
+        monsterRect.right - exMonsterWidth / 5 - containerLeft;
+ 
+      if (
+        bullletMidX > monsterStartX &&
+        bullletMidX < monsterEndX &&
+        monsterEndY > 10 &&
+        exBulletEndY - exBulletHeight > monsterEndY
+      )
+        return monster;
+    })
+    .sort(
+      (a, b) => b.getBoundingClientRect().top - a.getBoundingClientRect().top
+    )[0];
+ 
+  return alignedMonster;
+}
+let lastClickTime = 0
+function shoot() {
+  const currentTime = Date.now()
+  if (currentTime - lastClickTime >= firetime) {
+    lastClickTime = currentTime;
+  } else {
+    return
+  }
+  const idleBullet = bullets.filter(
+    (bullet) => !bullet.dataset.transitioning
+  )[0];
+ 
+  if (!idleBullet) return;
+  playAudio(document.querySelector("#shoot-sound"));
+ 
+  let distance = exBulletEndY,
+    transDur;
+  // the monster player is bltTransing at
+  const alignedMonster = getAlignedMonster(idleBullet);
+ 
+  if (alignedMonster) {
+    const alignedMonsterEndY =
+      alignedMonster.getBoundingClientRect().bottom - containerTop;
+    // distance from 1/4 of monster to idleBullet
+    distance = exBulletEndY - alignedMonsterEndY + exMonsterHeight / 3;
+  }
+  // 2.45ms should be taken to travell each pixel
+  transDur = distance * (640 / containerHeight) * 1.45;
+ 
+  idleBullet.style.transitionDuration = transDur + "ms";
+  idleBullet.style.transform = `translateY(${-distance}px)`;
+ 
+  if (alignedMonster)
+    setTimeout(() => reduceMonsterHealth(alignedMonster), transDur);
+ 
+  setTimeout(function () {
+    if (fingerOnShip) shoot();
+  }, firetime);
+}
+ 
+function reduceMonsterHealth(monster) {
+  const monsterHealth = monster.querySelector(".monster__health");
+  const monsterHealthBar = monster.querySelector(".monster__health__bar");
+  let monsterHealthInt = monsterHealthBar.dataset.health;
+  let scoreInt = scoreDiv.innerText;
+ 
+  monsterHealth.style.opacity = 1;
+  monsterHealthInt -= bulletDmg;
+  monsterHealthBar.dataset.health = monsterHealthInt;
+  monsterHealthBar.style.width =
+    (monsterHealthInt < 0 ? 0 : monsterHealthInt) + "%";
+ 
+  if (monsterHealthInt <= 0) {
+    playAudio(document.querySelector("#monster-killed-sound"));
+    decBltDmg();
+    setMonster(monster);
+    ++scoreInt;
+    scoreDiv.innerText = scoreInt < 10 ? "0" + scoreInt : scoreInt;
+  }
+  // show the health for only 50ms
+  monsterHealth.addEventListener("transitionend", () =>
+    setTimeout(() => (monsterHealth.style.opacity = 0), 50)
+  );
+}
+ 
+function resetBullet(activeBullet) {
+  activeBullet.style.transitionDuration = "0s";
+  activeBullet.style.left = "auto";
+  activeBullet.style.transform = "translateY(0)";
+}
+ 
+/* monster part */
+ 
+function decBltDmg() {
+  if (!(bulletDmg <= 10)) bulletDmg -= 0.6;
+}
+ 
+function addMonsterListener(monster) {
+  monster.addEventListener("animationend", function (e) {
+    playAudio(document.querySelector("#heart-lost-sound"));
+    decBltDmg();
+    monster.dataset.animating = "";
+    heart.classList.add("shake");
+    heart.addEventListener("animationend", () =>
+      heart.classList.remove("shake")
+    );
+    playerLives.innerText--;
+ 
+    if (playerLives.innerText === "0") {
+      setTimeout(
+        () => playAudio(document.querySelector("#game-over-sound")),
+        2000
+      );
+      clearInterval(moveMonsterDownId); // stop creating monsters
+      Array.from(monstersContainer.children).forEach((monster) =>
+        setMonster(monster)
+      );
+      return;
+    }
+    setMonster(monster);
+  });
+  return monster;
+}
+function handleMonster() {
+  const totalMonsters = 5;
+  let i = monstersContainer.children.length;
+  addMonsterListener(exMonster);
+  setMonster(exMonster);
+ 
+  while (i < totalMonsters) {
+    const newMonster = exMonster.cloneNode(true);
+    addMonsterListener(newMonster);
+    setMonster(newMonster);
+    monstersContainer.appendChild(newMonster);
+    i++;
+  }
+}
+ 
+function setMonster(monster) {
+  const monsterHealthBar = monster.querySelector(".monster__health__bar");
+  const space = 15;
+  const maxX = containerWidth - exMonsterWidth - space;
+  const x = randomInt(space, maxX);
+ 
+  monster.classList.remove("move-down");
+  monster.style.left = x + "px";
+  monster.dataset.animating = "";
+  monsterHealthBar.dataset.health = "100";
+  monsterHealthBar.style.width = "100%";
+}
+ 
+function moveMonsterDown() {
+  const idleMonsters = Array.from(
+    monstersContainer.querySelectorAll(".monster")
+  ).filter((monster) => !monster.dataset.animating);
+  const rdmIndex = randomInt(0, idleMonsters.length - 1);
+  const rdmIdleMonster = idleMonsters[rdmIndex];
+ 
+  if (!rdmIdleMonster) return;
+  if (spawnTime != 2000) spawnTime -= 50;
+ 
+  monsterSpeed -= 0.1;
+  idleMonsters.forEach(function (idleMonster, index) {
+    if (index !== rdmIndex) setAnimDur(idleMonster, monsterSpeed);
+  });
+ 
+  rdmIdleMonster.style.animationDelay = randomInt(300, maxMonsterDelay-=100) + "ms";
+  rdmIdleMonster.classList.add("move-down");
+  rdmIdleMonster.dataset.animating = "true";
+}
+ 
+play.addEventListener('click', function () {
+  container.style.visibility = "visible";
+  startGame()
+})
+ 
+ship.addEventListener("touchstart", function (e) {
+  // check for cheaters
+  if (!e.isTrusted) return;
+  shipOffsetX = e.targetTouches[0].clientX - ship.getBoundingClientRect().left;
+  fingerOnShip = true;
+  shoot()
+});
+ship.addEventListener("touchend", () => (fingerOnShip = false));
+ship.addEventListener("touchmove", moveShip);
+ 
+bullets.forEach((bullet) =>
+  bullet.addEventListener(
+    "transitionstart",
+    () => (bullet.dataset.transitioning = "true")
+  )
+);
+bullets.forEach((bullet) =>
+  bullet.addEventListener("transitionend", function (e) {
+    bullet.dataset.transitioning = "";
+    resetBullet(bullet);
+  })
+);
+ 
+window.addEventListener("resize", () => location.reload());
+// orientationchange
+}
+ 
+  </script>
+</body>
+ 
+</html>
